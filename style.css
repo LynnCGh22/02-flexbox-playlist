@@ -22,17 +22,39 @@ header h1 {
   font-size: 42px;
 }
 
+/* Container layout */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  /* 4 * 220px + 3 * 20px = 940px */
+  max-width: 940px;
+  margin: 0 auto 20px;
+}
+
 /* Album card styling */
 .album {
   position: relative;
-  width: 220px; 
+  /* fixed size so exactly 4 cards fit per row in the container */
+  flex: 0 0 220px;
+  width: 220px;
   background: #fff;
   border: 1px solid #ddd;
+  overflow: hidden; /* ensure overlay is clipped */
+  cursor: pointer;
 }
 
 .album img {
   width: 100%;
   display: block;
+  transition: transform 200ms ease, filter 200ms ease;
+}
+
+.album:hover img {
+  transform: scale(1.02);
+  filter: brightness(0.85);
 }
 
 .info {
@@ -51,5 +73,57 @@ header h1 {
 }
 
 .overlay {
- display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  pointer-events: none;
+}
+
+.album:hover .overlay {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.overlay p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Small screens: horizontal side-scroll with wider album cards */
+@media (max-width: 600px) {
+  .container {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px;
+    gap: 16px;
+    scroll-snap-type: x mandatory;
+  }
+
+  /* subtle custom scrollbar for WebKit */
+  .container::-webkit-scrollbar {
+    height: 8px;
+  }
+  .container::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.15);
+    border-radius: 4px;
+  }
+
+  .album {
+    /* take most of the viewport so it looks wider on mobile */
+    flex: 0 0 80%;
+    width: 80%;
+    scroll-snap-align: center;
+  }
 }
